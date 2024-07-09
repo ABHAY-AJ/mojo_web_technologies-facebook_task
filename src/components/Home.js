@@ -12,14 +12,16 @@ function Home() {
     if (appId) {
       const loadFbSdk = () => {
         window.fbAsyncInit = function () {
-          window.FB.init({
-            appId: appId,
-            cookie: true,
-            xfbml: true,
-            version: 'v20.0',
-          });
+          if (window.FB) {
+            window.FB.init({
+              appId: appId,
+              cookie: true,
+              xfbml: true,
+              version: 'v20.0',
+            });
 
-          window.FB.AppEvents.logPageView();
+            window.FB.AppEvents.logPageView();
+          }
         };
 
         if (!document.getElementById('facebook-jssdk')) {
@@ -27,9 +29,6 @@ function Home() {
           js.id = 'facebook-jssdk';
           js.src = 'https://connect.facebook.net/en_US/sdk.js';
           document.body.appendChild(js);
-        } else {
-          // If the script already exists, call fbAsyncInit directly
-          window.fbAsyncInit();
         }
       };
 
