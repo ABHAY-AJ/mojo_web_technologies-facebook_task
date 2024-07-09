@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './Home.css';
 
 function Home() {
   const [user, setUser] = useState(null);
@@ -74,11 +75,13 @@ function Home() {
 
   const fetchPageInsights = (pageId) => {
     if (!pageId) return;
-
+  
     const since = Math.floor(new Date().getTime() / 1000) - 86400 * 30; // 30 days ago
     const until = Math.floor(new Date().getTime() / 1000); // now
+    const metricString = "page_fans,page_engaged_users,page_impressions,page_actions_post_reactions_total"; // Replace with desired metrics
+  
     window.FB.api(
-      `/${pageId}/insights?metric=page_fans,page_engaged_users,page_impressions,page_actions_post_reactions_total&since=${since}&until=${until}&period=day`,
+      `/${pageId}/insights?metric=${metricString}&since=${since}&until=${until}&period=day`, // Adjust period if needed
       (response) => {
         if (response && response.data) {
           const insights = {};
@@ -95,14 +98,14 @@ function Home() {
   };
 
   return (
-    <div className="App">
+    <div className="Home">
       <h1>Facebook Page Insights</h1>
-      {!user && <button onClick={handleLogin}>Login with Facebook</button>}
+      {!user && <button className="login-btn" onClick={handleLogin}>Login with Facebook</button>}
       {user && (
-        <div>
+        <div className="user-info">
           <h2>Welcome, {user.name}</h2>
-          <img src={user.picture.data.url} alt="Profile" />
-          <div>
+          <img className="profile-pic" src={user.picture.data.url} alt="Profile" />
+          <div className="page-selection">
             <h3>Select a Page</h3>
             <select onChange={handlePageSelection}>
               <option value="">Select a page</option>
@@ -114,21 +117,21 @@ function Home() {
             </select>
           </div>
           {selectedPage && (
-            <div>
+            <div className="page-insights">
               <h3>Page Insights</h3>
-              <div>
+              <div className="insight">
                 <h4>Total Followers/Fans</h4>
                 <p>{pageInsights.page_fans ? pageInsights.page_fans[0].value : 'N/A'}</p>
               </div>
-              <div>
+              <div className="insight">
                 <h4>Total Engagement</h4>
                 <p>{pageInsights.page_engaged_users ? pageInsights.page_engaged_users[0].value : 'N/A'}</p>
               </div>
-              <div>
+              <div className="insight">
                 <h4>Total Impressions</h4>
                 <p>{pageInsights.page_impressions ? pageInsights.page_impressions[0].value : 'N/A'}</p>
               </div>
-              <div>
+              <div className="insight">
                 <h4>Total Reactions</h4>
                 <p>{pageInsights.page_actions_post_reactions_total ? pageInsights.page_actions_post_reactions_total[0].value : 'N/A'}</p>
               </div>
