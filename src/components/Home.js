@@ -7,27 +7,29 @@ function Home() {
   const [selectedPage, setSelectedPage] = useState(null);
   const [pageInsights, setPageInsights] = useState({});
   const appId = "832338718493341";
+
   useEffect(() => {
     if (appId) {
-      // Load the Facebook SDK script
       const loadFbSdk = () => {
         window.fbAsyncInit = function () {
           window.FB.init({
-            appId: appId, // Use the fetched App ID
+            appId: appId,
             cookie: true,
             xfbml: true,
-            version: 'v20.0', // Ensure this is a valid version string
+            version: 'v20.0',
           });
 
           window.FB.AppEvents.logPageView();
         };
 
-        // Check if the script is already present
         if (!document.getElementById('facebook-jssdk')) {
           const js = document.createElement('script');
           js.id = 'facebook-jssdk';
           js.src = 'https://connect.facebook.net/en_US/sdk.js';
           document.body.appendChild(js);
+        } else {
+          // If the script already exists, call fbAsyncInit directly
+          window.fbAsyncInit();
         }
       };
 
@@ -53,7 +55,11 @@ function Home() {
   };
 
   const handleLogin = () => {
-    window.FB.login(checkLoginState, { scope: 'public_profile,pages_show_list' });
+    if (window.FB) {
+      window.FB.login(checkLoginState, { scope: 'public_profile,pages_show_list' });
+    } else {
+      console.error('Facebook SDK not loaded yet.');
+    }
   };
 
   const handlePageSelection = (event) => {
